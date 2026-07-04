@@ -63,7 +63,7 @@ function Projects() {
   const [editingProject, setEditingProject] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // ===========================
   // GET PROJECTS

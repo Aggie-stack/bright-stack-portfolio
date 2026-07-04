@@ -11,10 +11,11 @@ app.config.from_object(Config)
 CORS(app, resources={
     r"/*": {
         "origins": [
-             "http://localhost:5173",
-             "http://localhost:5174",
-             "http://127.0.0.1:5173",
-             "http://127.0.0.1:5174",
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:5174",
+            "https://bright-stack-portfolio.vercel.app",
         ]
     }
 })
@@ -36,7 +37,6 @@ def home():
 @app.route("/projects", methods=["GET"])
 def get_projects():
     projects = Project.query.all()
-
     return jsonify([project.to_dict() for project in projects])
 
 
@@ -46,7 +46,6 @@ def get_projects():
 @app.route("/projects/<int:id>", methods=["GET"])
 def get_project(id):
     project = Project.query.get_or_404(id)
-
     return jsonify(project.to_dict())
 
 
@@ -55,8 +54,10 @@ def get_project(id):
 # ==========================
 @app.route("/projects", methods=["POST"])
 def create_project():
-
     data = request.get_json()
+
+    if not data or "title" not in data or "description" not in data or "github_link" not in data:
+        return jsonify({"error": "Missing required fields"}), 400
 
     project = Project(
         title=data["title"],
@@ -76,9 +77,7 @@ def create_project():
 # ==========================
 @app.route("/projects/<int:id>", methods=["PUT"])
 def update_project(id):
-
     project = Project.query.get_or_404(id)
-
     data = request.get_json()
 
     project.title = data.get("title", project.title)
@@ -99,7 +98,6 @@ def update_project(id):
 # ==========================
 @app.route("/projects/<int:id>", methods=["DELETE"])
 def delete_project(id):
-
     project = Project.query.get_or_404(id)
 
     db.session.delete(project)
